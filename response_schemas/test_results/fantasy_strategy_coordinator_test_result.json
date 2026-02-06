@@ -1,0 +1,59 @@
+{
+  "agent_name": "Fantasy Strategy Coordinator",
+  "agent_id": "69858700c613a65b3c4193f1",
+  "test_message": "Generate optimal F1 fantasy team for Monaco GP with budget 95M, lock Lewis Hamilton and Ferrari constructor, balanced risk tolerance",
+  "expected_purpose": "manager",
+  "timestamp": "2026-02-06T06:23:11.704217",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "success",
+    "result": {
+      "recommended_team": {
+        "drivers": [
+          "Lewis Hamilton",
+          "Fernando Alonso",
+          "Lando Norris",
+          "Esteban Ocon",
+          "Alexander Albon"
+        ],
+        "constructor": "Ferrari",
+        "total_cost": 94.8,
+        "projected_points": 190
+      },
+      "alternatives": [
+        {
+          "drivers": [
+            "Lewis Hamilton",
+            "Carlos Sainz",
+            "Pierre Gasly",
+            "Oscar Piastri",
+            "Yuki Tsunoda"
+          ],
+          "constructor": "Ferrari",
+          "total_cost": 94.7,
+          "projected_points": 185
+        },
+        {
+          "drivers": [
+            "Lewis Hamilton",
+            "George Russell",
+            "Esteban Ocon",
+            "Kevin Magnussen",
+            "Logan Sargeant"
+          ],
+          "constructor": "Ferrari",
+          "total_cost": 94.5,
+          "projected_points": 188
+        }
+      ],
+      "confidence_score": 85,
+      "risk_level": "Medium"
+    },
+    "metadata": {
+      "agent_name": "Fantasy Strategy Coordinator",
+      "timestamp": "2023-10-11T14:00:00Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"recommended_team\": {\n      \"drivers\": [\"Lewis Hamilton\", \"Fernando Alonso\", \"Lando Norris\", \"Esteban Ocon\", \"Alexander Albon\"],\n      \"constructor\": \"Ferrari\",\n      \"total_cost\": 94.8,\n      \"projected_points\": 190\n    },\n    \"alternatives\": [\n      {\n        \"drivers\": [\"Lewis Hamilton\", \"Carlos Sainz\", \"Pierre Gasly\", \"Oscar Piastri\", \"Yuki Tsunoda\"],\n        \"constructor\": \"Ferrari\",\n        \"total_cost\": 94.7,\n        \"projected_points\": 185\n      },\n      {\n        \"drivers\": [\"Lewis Hamilton\", \"George Russell\", \"Esteban Ocon\", \"Kevin Magnussen\", \"Logan Sargeant\"],\n        \"constructor\": \"Ferrari\",\n        \"total_cost\": 94.5,\n        \"projected_points\": 188\n      }\n    ],\n    \"confidence_score\": 85,\n    \"risk_level\": \"Medium\"\n  },\n  \"metadata\": {\n    \"agent_name\": \"Fantasy Strategy Coordinator\",\n    \"timestamp\": \"2023-10-11T14:00:00Z\"\n  }\n}"
+}

@@ -1,0 +1,63 @@
+{
+  "agent_name": "News Intelligence Agent",
+  "agent_id": "698586deb90162af337b1e83",
+  "agent_purpose": "Surfaces performance-impacting F1 news including team announcements, driver updates, injury reports, weather forecasts, technical upgrades, and breaking news that affects fantasy point potential",
+  "description": "Analyzes recent F1 news and events to provide actionable intelligence for fantasy strategy decisions",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "mclaren_news": {
+        "performance_update": "string",
+        "driver_comment": "string"
+      },
+      "monaco_gp_weather": {
+        "forecast": "string",
+        "impact_assessment": "string"
+      }
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "mclaren_news": {
+        "performance_update": "McLaren has reported a significant uptick in performance after recent technical upgrades. The team is optimistic about their speed and handling, especially following successful tests at the recent Silverstone circuit.",
+        "driver_comment": "Lando Norris expressed confidence about the car's performance moving into the Monaco GP, highlighting improvements in cornering stability."
+      },
+      "monaco_gp_weather": {
+        "forecast": "The upcoming Monaco GP is expected to see mixed weather conditions. Forecasts indicate a high chance of rain during the race, which could affect tire strategies and overall performance.",
+        "impact_assessment": "Rain could complicate the race dynamics significantly, giving an advantage to drivers skilled in wet conditions. Teams may need to adjust their strategies to accommodate potential wet tire choices."
+      }
+    },
+    "metadata": {
+      "agent_name": "News Intelligence Agent",
+      "timestamp": "2023-10-03T10:45:00Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T06:23:23.939371",
+  "test_message_used": "Hello, provide a sample response",
+  "raw_test_response": "litellm.BadRequestError: LLM Provider NOT provided. Pass in the LLM provider you are trying to call. You passed model=sonar-pro\n Pass model as E.g. For 'Huggingface' inference endpoints pass in `completion(model='huggingface/starcoder',..)` Learn more: https://docs.litellm.ai/docs/providers",
+  "test_error": "Response not valid JSON: Expecting value: line 1 column 1 (char 0)",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "mclaren_news": {
+        "performance_update": "McLaren has reported a significant uptick in performance after recent technical upgrades. The team is optimistic about their speed and handling, especially following successful tests at the recent Silverstone circuit.",
+        "driver_comment": "Lando Norris expressed confidence about the car's performance moving into the Monaco GP, highlighting improvements in cornering stability."
+      },
+      "monaco_gp_weather": {
+        "forecast": "The upcoming Monaco GP is expected to see mixed weather conditions. Forecasts indicate a high chance of rain during the race, which could affect tire strategies and overall performance.",
+        "impact_assessment": "Rain could complicate the race dynamics significantly, giving an advantage to drivers skilled in wet conditions. Teams may need to adjust their strategies to accommodate potential wet tire choices."
+      }
+    },
+    "metadata": {
+      "agent_name": "News Intelligence Agent",
+      "timestamp": "2023-10-03T10:45:00Z"
+    }
+  },
+  "test_passed": true
+}

@@ -1,0 +1,55 @@
+{
+  "agent_name": "Value Tracking Agent",
+  "agent_id": "698586ec094c8b2d4207dcab",
+  "test_message": "Analyze fantasy price trends for Oscar Piastri and identify undervalued drivers for Monaco GP",
+  "expected_purpose": "assistant",
+  "timestamp": "2026-02-06T06:24:24.562750",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "success",
+    "result": {
+      "driver": {
+        "name": "Oscar Piastri",
+        "current_price": 8.5,
+        "historical_price_trends": {
+          "last_race_price": 8.0,
+          "price_change_1_week": 0.5,
+          "price_change_1_month": 1.0,
+          "performance_metrics": {
+            "last_5_races": {
+              "average_finish_position": 10.0,
+              "points_scored": 15
+            },
+            "predicted_performance": {
+              "next_race": {
+                "expected_finish_position": 8.0,
+                "predicted_points": 18
+              }
+            }
+          }
+        },
+        "value_rating": "medium"
+      },
+      "undervalued_drivers": [
+        {
+          "name": "Liam Lawson",
+          "current_price": 6.0,
+          "value_rating": "high",
+          "predicted_price_change": 1.5
+        },
+        {
+          "name": "Nyck de Vries",
+          "current_price": 5.5,
+          "value_rating": "high",
+          "predicted_price_change": 1.0
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Value Tracking Agent",
+      "timestamp": "2023-10-05T14:00:00Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"driver\": {\n      \"name\": \"Oscar Piastri\",\n      \"current_price\": 8.5,\n      \"historical_price_trends\": {\n        \"last_race_price\": 8.0,\n        \"price_change_1_week\": 0.5,\n        \"price_change_1_month\": 1.0,\n        \"performance_metrics\": {\n          \"last_5_races\": {\n            \"average_finish_position\": 10.0,\n            \"points_scored\": 15\n          },\n          \"predicted_performance\": {\n            \"next_race\": {\n              \"expected_finish_position\": 8.0,\n              \"predicted_points\": 18\n            }\n          }\n        }\n      },\n      \"value_rating\": \"medium\"\n    },\n    \"undervalued_drivers\": [\n      {\n        \"name\": \"Liam Lawson\",\n        \"current_price\": 6.0,\n        \"value_rating\": \"high\",\n        \"predicted_price_change\": 1.5\n      },\n      {\n        \"name\": \"Nyck de Vries\",\n        \"current_price\": 5.5,\n        \"value_rating\": \"high\",\n        \"predicted_price_change\": 1.0\n      }\n    ]\n  },\n  \"metadata\": {\n    \"agent_name\": \"Value Tracking Agent\",\n    \"timestamp\": \"2023-10-05T14:00:00Z\"\n  }\n}"
+}

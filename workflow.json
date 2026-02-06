@@ -1,0 +1,151 @@
+{
+  "workflow_name": "F1 Fantasy Intelligence Platform",
+  "workflow_id": "f1_fantasy_intelligence_platform",
+  "architecture": "Manager-Subagent + Independent Agent (Hybrid)",
+  "nodes": [
+    {
+      "id": "input_node",
+      "type": "Input",
+      "label": "User Query",
+      "nodeCategory": "input"
+    },
+    {
+      "id": "manager_agent",
+      "type": "Agent",
+      "label": "Fantasy Strategy Coordinator",
+      "nodeCategory": "agent",
+      "agent_id": "69858700c613a65b3c4193f1",
+      "agent_name": "Fantasy Strategy Coordinator",
+      "agent_type": "manager"
+    },
+    {
+      "id": "stats_agent",
+      "type": "Agent",
+      "label": "Stats Analysis Agent",
+      "nodeCategory": "agent",
+      "agent_id": "698586cf36d36472c112ac1b",
+      "agent_name": "Stats Analysis Agent",
+      "agent_type": "sub-agent"
+    },
+    {
+      "id": "news_agent",
+      "type": "Agent",
+      "label": "News Intelligence Agent",
+      "nodeCategory": "agent",
+      "agent_id": "698586deb90162af337b1e83",
+      "agent_name": "News Intelligence Agent",
+      "agent_type": "sub-agent"
+    },
+    {
+      "id": "value_agent",
+      "type": "Agent",
+      "label": "Value Tracking Agent",
+      "nodeCategory": "agent",
+      "agent_id": "698586ec094c8b2d4207dcab",
+      "agent_name": "Value Tracking Agent",
+      "agent_type": "sub-agent"
+    },
+    {
+      "id": "narrative_agent",
+      "type": "Agent",
+      "label": "AI Narrative Agent",
+      "nodeCategory": "agent",
+      "agent_id": "69858718f5dba64760ed7f27",
+      "agent_name": "AI Narrative Agent",
+      "agent_type": "independent"
+    },
+    {
+      "id": "output_node",
+      "type": "Output",
+      "label": "Recommendations",
+      "nodeCategory": "end"
+    }
+  ],
+  "edges": [
+    {
+      "source": "input_node",
+      "target": "manager_agent",
+      "description": "Main flow for team recommendations"
+    },
+    {
+      "source": "manager_agent",
+      "target": "stats_agent",
+      "description": "Delegates to sub-agent"
+    },
+    {
+      "source": "manager_agent",
+      "target": "news_agent",
+      "description": "Delegates to sub-agent"
+    },
+    {
+      "source": "manager_agent",
+      "target": "value_agent",
+      "description": "Delegates to sub-agent"
+    },
+    {
+      "source": "manager_agent",
+      "target": "output_node",
+      "description": "Returns recommendations"
+    },
+    {
+      "source": "input_node",
+      "target": "narrative_agent",
+      "description": "Separate flow for explanations"
+    },
+    {
+      "source": "narrative_agent",
+      "target": "output_node",
+      "description": "Returns narratives"
+    }
+  ],
+  "agents": [
+    {
+      "agent_id": "69858700c613a65b3c4193f1",
+      "name": "Fantasy Strategy Coordinator",
+      "role": "F1 Fantasy Strategy Manager",
+      "type": "manager",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "managed_agents": [
+        "698586cf36d36472c112ac1b",
+        "698586deb90162af337b1e83",
+        "698586ec094c8b2d4207dcab"
+      ]
+    },
+    {
+      "agent_id": "698586cf36d36472c112ac1b",
+      "name": "Stats Analysis Agent",
+      "role": "F1 Performance Data Analyst",
+      "type": "sub-agent",
+      "provider": "perplexity",
+      "model": "sonar-pro",
+      "tools": ["PERPLEXITY_SEARCH"]
+    },
+    {
+      "agent_id": "698586deb90162af337b1e83",
+      "name": "News Intelligence Agent",
+      "role": "F1 News Intelligence Analyst",
+      "type": "sub-agent",
+      "provider": "perplexity",
+      "model": "sonar-pro",
+      "tools": ["PERPLEXITY_SEARCH"]
+    },
+    {
+      "agent_id": "698586ec094c8b2d4207dcab",
+      "name": "Value Tracking Agent",
+      "role": "F1 Fantasy Value Analyst",
+      "type": "sub-agent",
+      "provider": "perplexity",
+      "model": "sonar-pro",
+      "tools": ["PERPLEXITY_SEARCH"]
+    },
+    {
+      "agent_id": "69858718f5dba64760ed7f27",
+      "name": "AI Narrative Agent",
+      "role": "F1 Fantasy Storyteller",
+      "type": "independent",
+      "provider": "openai",
+      "model": "gpt-4o"
+    }
+  ]
+}

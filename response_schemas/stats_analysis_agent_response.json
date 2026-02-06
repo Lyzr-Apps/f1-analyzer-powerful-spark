@@ -1,0 +1,246 @@
+{
+  "agent_name": "Stats Analysis Agent",
+  "agent_id": "698586cf36d36472c112ac1b",
+  "agent_purpose": "Provides comprehensive statistical analysis of F1 race data, driver performance metrics, constructor standings, circuit-specific statistics, head-to-head records, and recent form patterns for fantasy decision-making",
+  "description": "Analyzes historical F1 race data and performance metrics to provide quantitative insights for fantasy team optimization",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "circuit_stats": {
+        "circuit_name": "string",
+        "length_km": "number",
+        "laps": "number",
+        "race_distance_km": "number"
+      },
+      "driver_performance": [
+        {
+          "driver": "string",
+          "qualified_position": "number",
+          "finished_position": "number",
+          "fastest_lap": "boolean",
+          "points_scored": "number"
+        }
+      ],
+      "constructor_performance": [
+        {
+          "constructor": "string",
+          "points_collected": "number"
+        }
+      ],
+      "recent_form": [
+        {
+          "driver": "string",
+          "last_3_races": [
+            {
+              "race": "string",
+              "finish_position": "number"
+            }
+          ]
+        }
+      ],
+      "head_to_head": [
+        {
+          "rounds": "string",
+          "max_verstappen": {
+            "wins": "number",
+            "second_places": "number"
+          },
+          "charles_leclerc": {
+            "wins": "number",
+            "second_places": "number"
+          }
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "circuit_stats": {
+        "circuit_name": "Monaco",
+        "length_km": 3.337,
+        "laps": 78,
+        "race_distance_km": 260.286
+      },
+      "driver_performance": [
+        {
+          "driver": "Max Verstappen",
+          "qualified_position": 1,
+          "finished_position": 1,
+          "fastest_lap": true,
+          "points_scored": 25
+        },
+        {
+          "driver": "Charles Leclerc",
+          "qualified_position": 2,
+          "finished_position": 4,
+          "fastest_lap": false,
+          "points_scored": 12
+        }
+      ],
+      "constructor_performance": [
+        {
+          "constructor": "Red Bull Racing",
+          "points_collected": 25
+        },
+        {
+          "constructor": "Ferrari",
+          "points_collected": 12
+        }
+      ],
+      "recent_form": [
+        {
+          "driver": "Max Verstappen",
+          "last_3_races": [
+            {
+              "race": "Spain",
+              "finish_position": 1
+            },
+            {
+              "race": "Portugal",
+              "finish_position": 2
+            },
+            {
+              "race": "Monaco",
+              "finish_position": 1
+            }
+          ]
+        },
+        {
+          "driver": "Charles Leclerc",
+          "last_3_races": [
+            {
+              "race": "Spain",
+              "finish_position": 4
+            },
+            {
+              "race": "Portugal",
+              "finish_position": 3
+            },
+            {
+              "race": "Monaco",
+              "finish_position": 4
+            }
+          ]
+        }
+      ],
+      "head_to_head": [
+        {
+          "rounds": "Last 5 Races",
+          "max_verstappen": {
+            "wins": 4,
+            "second_places": 1
+          },
+          "charles_leclerc": {
+            "wins": 1,
+            "second_places": 0
+          }
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Stats Analysis Agent",
+      "timestamp": "2023-11-01T12:00:00Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T06:22:59.075430",
+  "test_message_used": "Hello, provide a sample response",
+  "raw_test_response": "litellm.BadRequestError: LLM Provider NOT provided. Pass in the LLM provider you are trying to call. You passed model=sonar-pro\n Pass model as E.g. For 'Huggingface' inference endpoints pass in `completion(model='huggingface/starcoder',..)` Learn more: https://docs.litellm.ai/docs/providers",
+  "test_error": "Response not valid JSON: Expecting value: line 1 column 1 (char 0)",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "circuit_stats": {
+        "circuit_name": "Monaco",
+        "length_km": 3.337,
+        "laps": 78,
+        "race_distance_km": 260.286
+      },
+      "driver_performance": [
+        {
+          "driver": "Max Verstappen",
+          "qualified_position": 1,
+          "finished_position": 1,
+          "fastest_lap": true,
+          "points_scored": 25
+        },
+        {
+          "driver": "Charles Leclerc",
+          "qualified_position": 2,
+          "finished_position": 4,
+          "fastest_lap": false,
+          "points_scored": 12
+        }
+      ],
+      "constructor_performance": [
+        {
+          "constructor": "Red Bull Racing",
+          "points_collected": 25
+        },
+        {
+          "constructor": "Ferrari",
+          "points_collected": 12
+        }
+      ],
+      "recent_form": [
+        {
+          "driver": "Max Verstappen",
+          "last_3_races": [
+            {
+              "race": "Spain",
+              "finish_position": 1
+            },
+            {
+              "race": "Portugal",
+              "finish_position": 2
+            },
+            {
+              "race": "Monaco",
+              "finish_position": 1
+            }
+          ]
+        },
+        {
+          "driver": "Charles Leclerc",
+          "last_3_races": [
+            {
+              "race": "Spain",
+              "finish_position": 4
+            },
+            {
+              "race": "Portugal",
+              "finish_position": 3
+            },
+            {
+              "race": "Monaco",
+              "finish_position": 4
+            }
+          ]
+        }
+      ],
+      "head_to_head": [
+        {
+          "rounds": "Last 5 Races",
+          "max_verstappen": {
+            "wins": 4,
+            "second_places": 1
+          },
+          "charles_leclerc": {
+            "wins": 1,
+            "second_places": 0
+          }
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Stats Analysis Agent",
+      "timestamp": "2023-11-01T12:00:00Z"
+    }
+  },
+  "test_passed": true
+}

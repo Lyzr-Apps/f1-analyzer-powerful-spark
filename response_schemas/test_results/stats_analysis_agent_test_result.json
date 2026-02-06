@@ -1,0 +1,100 @@
+{
+  "agent_name": "Stats Analysis Agent",
+  "agent_id": "698586cf36d36472c112ac1b",
+  "test_message": "Analyze Max Verstappen and Charles Leclerc performance for Monaco Grand Prix including qualifying stats and race finishing positions",
+  "expected_purpose": "assistant",
+  "timestamp": "2026-02-06T06:22:59.074687",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "success",
+    "result": {
+      "circuit_stats": {
+        "circuit_name": "Monaco",
+        "length_km": 3.337,
+        "laps": 78,
+        "race_distance_km": 260.286
+      },
+      "driver_performance": [
+        {
+          "driver": "Max Verstappen",
+          "qualified_position": 1,
+          "finished_position": 1,
+          "fastest_lap": true,
+          "points_scored": 25
+        },
+        {
+          "driver": "Charles Leclerc",
+          "qualified_position": 2,
+          "finished_position": 4,
+          "fastest_lap": false,
+          "points_scored": 12
+        }
+      ],
+      "constructor_performance": [
+        {
+          "constructor": "Red Bull Racing",
+          "points_collected": 25
+        },
+        {
+          "constructor": "Ferrari",
+          "points_collected": 12
+        }
+      ],
+      "recent_form": [
+        {
+          "driver": "Max Verstappen",
+          "last_3_races": [
+            {
+              "race": "Spain",
+              "finish_position": 1
+            },
+            {
+              "race": "Portugal",
+              "finish_position": 2
+            },
+            {
+              "race": "Monaco",
+              "finish_position": 1
+            }
+          ]
+        },
+        {
+          "driver": "Charles Leclerc",
+          "last_3_races": [
+            {
+              "race": "Spain",
+              "finish_position": 4
+            },
+            {
+              "race": "Portugal",
+              "finish_position": 3
+            },
+            {
+              "race": "Monaco",
+              "finish_position": 4
+            }
+          ]
+        }
+      ],
+      "head_to_head": [
+        {
+          "rounds": "Last 5 Races",
+          "max_verstappen": {
+            "wins": 4,
+            "second_places": 1
+          },
+          "charles_leclerc": {
+            "wins": 1,
+            "second_places": 0
+          }
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Stats Analysis Agent",
+      "timestamp": "2023-11-01T12:00:00Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"circuit_stats\": {\n      \"circuit_name\": \"Monaco\",\n      \"length_km\": 3.337,\n      \"laps\": 78,\n      \"race_distance_km\": 260.286\n    },\n    \"driver_performance\": [\n      {\n        \"driver\": \"Max Verstappen\",\n        \"qualified_position\": 1,\n        \"finished_position\": 1,\n        \"fastest_lap\": true,\n        \"points_scored\": 25\n      },\n      {\n        \"driver\": \"Charles Leclerc\",\n        \"qualified_position\": 2,\n        \"finished_position\": 4,\n        \"fastest_lap\": false,\n        \"points_scored\": 12\n      }\n    ],\n    \"constructor_performance\": [\n      {\n        \"constructor\": \"Red Bull Racing\",\n        \"points_collected\": 25\n      },\n      {\n        \"constructor\": \"Ferrari\",\n        \"points_collected\": 12\n      }\n    ],\n    \"recent_form\": [\n      {\n        \"driver\": \"Max Verstappen\",\n        \"last_3_races\": [\n          {\"race\": \"Spain\", \"finish_position\": 1},\n          {\"race\": \"Portugal\", \"finish_position\": 2},\n          {\"race\": \"Monaco\", \"finish_position\": 1}\n        ]\n      },\n      {\n        \"driver\": \"Charles Leclerc\",\n        \"last_3_races\": [\n          {\"race\": \"Spain\", \"finish_position\": 4},\n          {\"race\": \"Portugal\", \"finish_position\": 3},\n          {\"race\": \"Monaco\", \"finish_position\": 4}\n        ]\n      }\n    ],\n    \"head_to_head\": [\n      {\n        \"rounds\": \"Last 5 Races\",\n        \"max_verstappen\": {\n          \"wins\": 4,\n          \"second_places\": 1\n        },\n        \"charles_leclerc\": {\n          \"wins\": 1,\n          \"second_places\": 0\n        }\n      }\n    ]\n  },\n  \"metadata\": {\"agent_name\": \"Stats Analysis Agent\", \"timestamp\": \"2023-11-01T12:00:00Z\"}\n}"
+}

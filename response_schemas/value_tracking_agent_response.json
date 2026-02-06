@@ -1,0 +1,141 @@
+{
+  "agent_name": "Value Tracking Agent",
+  "agent_id": "698586ec094c8b2d4207dcab",
+  "agent_purpose": "Identifies value opportunities in F1 fantasy by analyzing pricing trends, predicting price changes, and finding undervalued picks based on performance vs. cost analysis",
+  "description": "Analyzes F1 fantasy platform pricing to identify value opportunities and predict price movements",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "driver": {
+        "name": "string",
+        "current_price": "number",
+        "historical_price_trends": {
+          "last_race_price": "number",
+          "price_change_1_week": "number",
+          "price_change_1_month": "number",
+          "performance_metrics": {
+            "last_5_races": {
+              "average_finish_position": "number",
+              "points_scored": "number"
+            },
+            "predicted_performance": {
+              "next_race": {
+                "expected_finish_position": "number",
+                "predicted_points": "number"
+              }
+            }
+          }
+        },
+        "value_rating": "string"
+      },
+      "undervalued_drivers": [
+        {
+          "name": "string",
+          "current_price": "number",
+          "value_rating": "string",
+          "predicted_price_change": "number"
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "driver": {
+        "name": "Oscar Piastri",
+        "current_price": 8.5,
+        "historical_price_trends": {
+          "last_race_price": 8.0,
+          "price_change_1_week": 0.5,
+          "price_change_1_month": 1.0,
+          "performance_metrics": {
+            "last_5_races": {
+              "average_finish_position": 10.0,
+              "points_scored": 15
+            },
+            "predicted_performance": {
+              "next_race": {
+                "expected_finish_position": 8.0,
+                "predicted_points": 18
+              }
+            }
+          }
+        },
+        "value_rating": "medium"
+      },
+      "undervalued_drivers": [
+        {
+          "name": "Liam Lawson",
+          "current_price": 6.0,
+          "value_rating": "high",
+          "predicted_price_change": 1.5
+        },
+        {
+          "name": "Nyck de Vries",
+          "current_price": 5.5,
+          "value_rating": "high",
+          "predicted_price_change": 1.0
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Value Tracking Agent",
+      "timestamp": "2023-10-05T14:00:00Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T06:24:24.563805",
+  "test_message_used": "Hello, provide a sample response",
+  "raw_test_response": "litellm.BadRequestError: LLM Provider NOT provided. Pass in the LLM provider you are trying to call. You passed model=sonar-pro\n Pass model as E.g. For 'Huggingface' inference endpoints pass in `completion(model='huggingface/starcoder',..)` Learn more: https://docs.litellm.ai/docs/providers",
+  "test_error": "Response not valid JSON: Expecting value: line 1 column 1 (char 0)",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "driver": {
+        "name": "Oscar Piastri",
+        "current_price": 8.5,
+        "historical_price_trends": {
+          "last_race_price": 8.0,
+          "price_change_1_week": 0.5,
+          "price_change_1_month": 1.0,
+          "performance_metrics": {
+            "last_5_races": {
+              "average_finish_position": 10.0,
+              "points_scored": 15
+            },
+            "predicted_performance": {
+              "next_race": {
+                "expected_finish_position": 8.0,
+                "predicted_points": 18
+              }
+            }
+          }
+        },
+        "value_rating": "medium"
+      },
+      "undervalued_drivers": [
+        {
+          "name": "Liam Lawson",
+          "current_price": 6.0,
+          "value_rating": "high",
+          "predicted_price_change": 1.5
+        },
+        {
+          "name": "Nyck de Vries",
+          "current_price": 5.5,
+          "value_rating": "high",
+          "predicted_price_change": 1.0
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Value Tracking Agent",
+      "timestamp": "2023-10-05T14:00:00Z"
+    }
+  },
+  "test_passed": true
+}

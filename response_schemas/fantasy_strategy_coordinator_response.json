@@ -1,0 +1,137 @@
+{
+  "agent_name": "Fantasy Strategy Coordinator",
+  "agent_id": "69858700c613a65b3c4193f1",
+  "agent_purpose": "Orchestrates sub-agents to collect comprehensive F1 data, applies user constraints (locked selections, budget caps, risk tolerance), and generates optimized team recommendations with multi-factor scoring and confidence indicators",
+  "description": "Manager agent that coordinates data collection and delivers optimized F1 fantasy team recommendations",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "recommended_team": {
+        "drivers": [
+          "string"
+        ],
+        "constructor": "string",
+        "total_cost": "number",
+        "projected_points": "number"
+      },
+      "alternatives": [
+        {
+          "drivers": [
+            "string"
+          ],
+          "constructor": "string",
+          "total_cost": "number",
+          "projected_points": "number"
+        }
+      ],
+      "confidence_score": "number",
+      "risk_level": "string"
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "recommended_team": {
+        "drivers": [
+          "Lewis Hamilton",
+          "Fernando Alonso",
+          "Lando Norris",
+          "Esteban Ocon",
+          "Alexander Albon"
+        ],
+        "constructor": "Ferrari",
+        "total_cost": 94.8,
+        "projected_points": 190
+      },
+      "alternatives": [
+        {
+          "drivers": [
+            "Lewis Hamilton",
+            "Carlos Sainz",
+            "Pierre Gasly",
+            "Oscar Piastri",
+            "Yuki Tsunoda"
+          ],
+          "constructor": "Ferrari",
+          "total_cost": 94.7,
+          "projected_points": 185
+        },
+        {
+          "drivers": [
+            "Lewis Hamilton",
+            "George Russell",
+            "Esteban Ocon",
+            "Kevin Magnussen",
+            "Logan Sargeant"
+          ],
+          "constructor": "Ferrari",
+          "total_cost": 94.5,
+          "projected_points": 188
+        }
+      ],
+      "confidence_score": 85,
+      "risk_level": "Medium"
+    },
+    "metadata": {
+      "agent_name": "Fantasy Strategy Coordinator",
+      "timestamp": "2023-10-11T14:00:00Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T06:23:11.704889",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "recommended_team": {
+        "drivers": [
+          "Lewis Hamilton",
+          "Fernando Alonso",
+          "Lando Norris",
+          "Esteban Ocon",
+          "Alexander Albon"
+        ],
+        "constructor": "Ferrari",
+        "total_cost": 94.8,
+        "projected_points": 190
+      },
+      "alternatives": [
+        {
+          "drivers": [
+            "Lewis Hamilton",
+            "Carlos Sainz",
+            "Pierre Gasly",
+            "Oscar Piastri",
+            "Yuki Tsunoda"
+          ],
+          "constructor": "Ferrari",
+          "total_cost": 94.7,
+          "projected_points": 185
+        },
+        {
+          "drivers": [
+            "Lewis Hamilton",
+            "George Russell",
+            "Esteban Ocon",
+            "Kevin Magnussen",
+            "Logan Sargeant"
+          ],
+          "constructor": "Ferrari",
+          "total_cost": 94.5,
+          "projected_points": 188
+        }
+      ],
+      "confidence_score": 85,
+      "risk_level": "Medium"
+    },
+    "metadata": {
+      "agent_name": "Fantasy Strategy Coordinator",
+      "timestamp": "2023-10-11T14:00:00Z"
+    }
+  },
+  "test_passed": true
+}

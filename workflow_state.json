@@ -1,0 +1,38 @@
+{
+  "workflow_id": "f1_fantasy_intelligence_platform",
+  "created_at": "2026-02-06T00:00:00Z",
+  "agents": {
+    "manager_agent": {
+      "agent_id": "69858700c613a65b3c4193f1",
+      "name": "Fantasy Strategy Coordinator",
+      "type": "manager",
+      "status": "active"
+    },
+    "stats_agent": {
+      "agent_id": "698586cf36d36472c112ac1b",
+      "name": "Stats Analysis Agent",
+      "type": "sub-agent",
+      "status": "active"
+    },
+    "news_agent": {
+      "agent_id": "698586deb90162af337b1e83",
+      "name": "News Intelligence Agent",
+      "type": "sub-agent",
+      "status": "active"
+    },
+    "value_agent": {
+      "agent_id": "698586ec094c8b2d4207dcab",
+      "name": "Value Tracking Agent",
+      "type": "sub-agent",
+      "status": "active"
+    },
+    "narrative_agent": {
+      "agent_id": "69858718f5dba64760ed7f27",
+      "name": "AI Narrative Agent",
+      "type": "independent",
+      "status": "active"
+    }
+  },
+  "architecture": "Manager-Subagent + Independent Agent (Hybrid)",
+  "total_agents": 5
+}
