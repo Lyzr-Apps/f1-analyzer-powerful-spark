@@ -4,6 +4,13 @@ import parseLLMJson from '@/lib/jsonParser'
 const LYZR_API_URL = 'https://agent-prod.studio.lyzr.ai/v3/inference/chat/'
 const LYZR_API_KEY = process.env.LYZR_API_KEY || ''
 
+// Validate environment on module load
+if (!LYZR_API_KEY && typeof window === 'undefined') {
+  console.error('[API Route] WARNING: LYZR_API_KEY is not configured!')
+}
+
+console.log('[API Route] /api/agent module loaded successfully')
+
 // Types
 interface NormalizedAgentResponse {
   status: 'success' | 'error'
@@ -98,8 +105,29 @@ function normalizeResponse(parsed: any): NormalizedAgentResponse {
 }
 
 export async function POST(request: NextRequest) {
+  // Top-level safety wrapper to ALWAYS return JSON, never HTML
   try {
-    const body = await request.json()
+    console.log('[API Route] POST /api/agent called')
+
+    let body: any
+    try {
+      body = await request.json()
+    } catch (jsonError) {
+      console.error('[API Route] Failed to parse request body:', jsonError)
+      return NextResponse.json(
+        {
+          success: false,
+          response: {
+            status: 'error',
+            result: {},
+            message: 'Invalid JSON in request body',
+          },
+          error: 'Invalid JSON in request body',
+        },
+        { status: 400 }
+      )
+    }
+
     const { message, agent_id, user_id, session_id, assets } = body
 
     if (!message || !agent_id) {
@@ -236,18 +264,63 @@ export async function POST(request: NextRequest) {
       )
     }
   } catch (error) {
+    console.error('[API Route] Unexpected error in POST handler:', error)
     const errorMsg = error instanceof Error ? error.message : 'Server error'
-    return NextResponse.json(
-      {
-        success: false,
-        response: {
-          status: 'error',
-          result: {},
-          message: errorMsg,
+    const errorStack = error instanceof Error ? error.stack : ''
+
+    // Try NextResponse.json first, fallback to raw Response if it fails
+    try {
+      return NextResponse.json(
+        {
+          success: false,
+          response: {
+            status: 'error',
+            result: {},
+            message: errorMsg,
+          },
+          error: errorMsg,
+          stack: process.env.NODE_ENV === 'development' ? errorStack : undefined,
         },
-        error: errorMsg,
-      },
-      { status: 500 }
+        { status: 500 }
+      )
+    } catch (catastrophicError) {
+      // Absolute last resort - if even NextResponse.json fails
+      console.error('[API Route] CATASTROPHIC ERROR:', catastrophicError)
+      return new Response(
+        JSON.stringify({
+          success: false,
+          response: { status: 'error', result: {}, message: 'Catastrophic server error' },
+          error: 'Catastrophic server error',
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
+    }
+  }
+}
+
+// GET handler for health check and debugging
+export async function GET() {
+  try {
+    return NextResponse.json({
+      status: 'ok',
+      message: 'F1 Fantasy AI Agent API is running',
+      lyzr_api_key_configured: !!LYZR_API_KEY,
+      environment: process.env.NODE_ENV || 'unknown',
+      timestamp: new Date().toISOString(),
+    })
+  } catch (error) {
+    return new Response(
+      JSON.stringify({
+        status: 'error',
+        message: 'Failed to generate health check response',
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
     )
   }
 }
