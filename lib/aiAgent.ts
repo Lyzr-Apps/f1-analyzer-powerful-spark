@@ -71,6 +71,8 @@ export async function callAIAgent(
   options?: { user_id?: string; session_id?: string; assets?: string[] }
 ): Promise<AIAgentResponse> {
   try {
+    console.log('[callAIAgent] Starting request:', { message, agent_id, options })
+
     const response = await fetch('/api/agent', {
       method: 'POST',
       headers: {
@@ -85,15 +87,23 @@ export async function callAIAgent(
       }),
     })
 
+    console.log('[callAIAgent] Response status:', response.status, response.statusText)
+    console.log('[callAIAgent] Response headers:', Object.fromEntries(response.headers.entries()))
+
     // Get the raw text first to help debug
     const rawText = await response.text()
+    console.log('[callAIAgent] Raw response length:', rawText.length)
+    console.log('[callAIAgent] Raw response preview:', rawText.substring(0, 500))
 
     // Try to parse as JSON
     let data: AIAgentResponse
     try {
       data = JSON.parse(rawText)
+      console.log('[callAIAgent] Successfully parsed JSON')
+      console.log('[callAIAgent] Parsed data:', JSON.stringify(data, null, 2))
     } catch (parseError) {
-      console.error('Failed to parse API response:', rawText.substring(0, 500))
+      console.error('[callAIAgent] JSON parse error:', parseError)
+      console.error('[callAIAgent] Failed to parse API response:', rawText.substring(0, 500))
       return {
         success: false,
         response: {
@@ -107,15 +117,18 @@ export async function callAIAgent(
 
     // Log errors for debugging
     if (!data.success) {
-      console.error('AI Agent Error:', data.error, data.response?.message)
+      console.error('[callAIAgent] API returned error:', data.error, data.response?.message)
       if (data.raw_response) {
-        console.error('Raw response preview:', data.raw_response.substring(0, 500))
+        console.error('[callAIAgent] Raw response from API:', data.raw_response.substring(0, 500))
       }
+    } else {
+      console.log('[callAIAgent] API call successful')
     }
 
+    console.log('[callAIAgent] Returning data:', { success: data.success, hasResponse: !!data.response })
     return data
   } catch (error) {
-    console.error('Network error calling AI agent:', error)
+    console.error('[callAIAgent] Network error:', error)
     return {
       success: false,
       response: {

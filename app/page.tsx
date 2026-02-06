@@ -794,15 +794,27 @@ export default function Home() {
         constraints.lockedConstructor ? ` and ${constraints.lockedConstructor} constructor` : ''
       }, ${constraints.riskTolerance.toLowerCase()} risk tolerance`
 
+      console.log('[generateRecommendation] Calling agent with message:', message)
       const result = await callAIAgent(message, AGENTS.FANTASY_COORDINATOR)
+      console.log('[generateRecommendation] Result received:', {
+        success: result.success,
+        responseStatus: result.response?.status,
+        hasResult: !!result.response?.result,
+        error: result.error
+      })
 
       if (result.success && result.response.status === 'success') {
+        console.log('[generateRecommendation] Setting recommendation:', result.response.result)
         setRecommendation(result.response.result as FantasyRecommendation)
       } else {
-        setError(result.response.message || 'Failed to generate recommendation')
+        const errorMsg = result.response.message || 'Failed to generate recommendation'
+        console.error('[generateRecommendation] Setting error:', errorMsg)
+        setError(errorMsg)
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMsg = err instanceof Error ? err.message : 'An error occurred'
+      console.error('[generateRecommendation] Exception caught:', err)
+      setError(errorMsg)
     } finally {
       setLoading(false)
     }
