@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { callAIAgent } from '@/lib/aiAgent'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,6 +12,19 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
+import {
+  DRIVERS,
+  CONSTRUCTORS,
+  getDriverByName,
+  getConstructorByName,
+  getNextRace,
+  calculateDaysUntilRace,
+  type Driver,
+  type Constructor
+} from '@/lib/f1Data'
 import {
   Loader2,
   TrendingUp,
@@ -25,7 +38,9 @@ import {
   Flag,
   Users,
   Zap,
-  Target
+  Target,
+  Check,
+  ChevronsUpDown
 } from 'lucide-react'
 
 // Agent IDs
@@ -35,20 +50,6 @@ const AGENTS = {
   NEWS_INTELLIGENCE: '698586deb90162af337b1e83',
   VALUE_TRACKING: '698586ec094c8b2d4207dcab',
   AI_NARRATIVE: '69858718f5dba64760ed7f27',
-}
-
-// F1 Team Colors
-const TEAM_COLORS: Record<string, string> = {
-  'Red Bull': '#0600ef',
-  'Ferrari': '#dc0000',
-  'Mercedes': '#00d2be',
-  'McLaren': '#ff8700',
-  'Aston Martin': '#006f62',
-  'Alpine': '#0090ff',
-  'Williams': '#005aff',
-  'Alfa Romeo': '#900000',
-  'Haas': '#ffffff',
-  'AlphaTauri': '#2b4562',
 }
 
 // TypeScript Interfaces from Test Responses
@@ -90,33 +91,6 @@ interface Constraints {
 
 type ViewMode = 'quick' | 'detailed' | 'comparison'
 
-// Helper function to get team from driver name (simplified)
-function getDriverTeam(driverName: string): string {
-  const teamMap: Record<string, string> = {
-    'Max Verstappen': 'Red Bull',
-    'Sergio Perez': 'Red Bull',
-    'Charles Leclerc': 'Ferrari',
-    'Carlos Sainz': 'Ferrari',
-    'Lewis Hamilton': 'Mercedes',
-    'George Russell': 'Mercedes',
-    'Lando Norris': 'McLaren',
-    'Oscar Piastri': 'McLaren',
-    'Fernando Alonso': 'Aston Martin',
-    'Lance Stroll': 'Aston Martin',
-    'Esteban Ocon': 'Alpine',
-    'Pierre Gasly': 'Alpine',
-    'Alexander Albon': 'Williams',
-    'Logan Sargeant': 'Williams',
-    'Valtteri Bottas': 'Alfa Romeo',
-    'Zhou Guanyu': 'Alfa Romeo',
-    'Kevin Magnussen': 'Haas',
-    'Nico Hulkenberg': 'Haas',
-    'Yuki Tsunoda': 'AlphaTauri',
-    'Daniel Ricciardo': 'AlphaTauri',
-  }
-  return teamMap[driverName] || 'Ferrari'
-}
-
 // Driver Card Component
 function DriverCard({
   name,
@@ -133,8 +107,11 @@ function DriverCard({
   onExplain?: () => void
   showDetails?: boolean
 }) {
-  const team = getDriverTeam(name)
-  const teamColor = TEAM_COLORS[team] || '#dc0000'
+  const driver = getDriverByName(name)
+  const team = driver?.team || 'Unknown'
+  const teamColor = driver?.teamColor || '#dc0000'
+  const fantasyValue = driver?.fantasyValue || 0
+  const isRookie = driver?.isRookie || false
 
   const riskColors = {
     'Low': 'bg-green-500/20 text-green-400 border-green-500/50',
@@ -154,7 +131,14 @@ function DriverCard({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg font-bold text-white">{name}</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-lg font-bold text-white">{name}</CardTitle>
+              {isRookie && (
+                <Badge variant="outline" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 text-xs">
+                  Rookie
+                </Badge>
+              )}
+            </div>
             <p className="text-xs text-gray-400 mt-1">{team}</p>
           </div>
           {isRecommended && (
@@ -193,20 +177,28 @@ function DriverCard({
           </>
         )}
 
-        {showDetails && (
+        {showDetails && driver && (
           <div className="pt-2 space-y-2 border-t border-gray-700">
             <div className="flex justify-between text-xs">
               <span className="text-gray-400">Value</span>
-              <span className="text-white font-mono">$12.5M</span>
+              <span className="text-white font-mono">${fantasyValue}M</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-gray-400">Form</span>
-              <div className="flex gap-1">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="w-2 h-4 bg-green-500 rounded-sm" />
-                ))}
-              </div>
+              <span className="text-gray-400">Predicted Points</span>
+              <span className="text-[#00d2be] font-bold">{driver.predictedPoints}</span>
             </div>
+            {driver.isRookie && driver.f2ChampionshipPosition && (
+              <div className="flex justify-between text-xs">
+                <span className="text-gray-400">F2 Position</span>
+                <span className="text-yellow-400">P{driver.f2ChampionshipPosition}</span>
+              </div>
+            )}
+            {!driver.isRookie && driver.previousSeasonPoints && (
+              <div className="flex justify-between text-xs">
+                <span className="text-gray-400">2025 Points</span>
+                <span className="text-gray-300">{driver.previousSeasonPoints}</span>
+              </div>
+            )}
           </div>
         )}
       </CardContent>
@@ -224,7 +216,9 @@ function ConstructorCard({
   isRecommended?: boolean
   confidence?: number
 }) {
-  const teamColor = TEAM_COLORS[name] || '#dc0000'
+  const constructor = getConstructorByName(name)
+  const teamColor = constructor?.color || '#dc0000'
+  const fantasyValue = constructor?.fantasyValue || 0
 
   return (
     <Card
@@ -266,6 +260,32 @@ function ConstructorCard({
 
 // Race Countdown Widget
 function RaceCountdown() {
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0 })
+  const nextRace = getNextRace()
+
+  useEffect(() => {
+    if (!nextRace) return
+
+    const updateCountdown = () => {
+      setCountdown(calculateDaysUntilRace(nextRace.id))
+    }
+
+    updateCountdown()
+    const interval = setInterval(updateCountdown, 60000) // Update every minute
+
+    return () => clearInterval(interval)
+  }, [nextRace])
+
+  if (!nextRace) {
+    return (
+      <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
+        <CardContent className="pt-6 text-center text-gray-400">
+          No upcoming races
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
       <CardHeader>
@@ -276,20 +296,21 @@ function RaceCountdown() {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <h3 className="text-2xl font-bold text-white">Monaco Grand Prix</h3>
-          <p className="text-gray-400 text-sm mt-1">Circuit de Monaco</p>
+          <h3 className="text-2xl font-bold text-white">{nextRace.name}</h3>
+          <p className="text-gray-400 text-sm mt-1">{nextRace.circuit}</p>
+          <p className="text-gray-500 text-xs mt-0.5">{nextRace.country}</p>
         </div>
         <div className="flex gap-4">
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#e10600]">5</div>
+            <div className="text-3xl font-bold text-[#e10600]">{countdown.days}</div>
             <div className="text-xs text-gray-400">Days</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#e10600]">12</div>
+            <div className="text-3xl font-bold text-[#e10600]">{countdown.hours}</div>
             <div className="text-xs text-gray-400">Hours</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#e10600]">34</div>
+            <div className="text-3xl font-bold text-[#e10600]">{countdown.minutes}</div>
             <div className="text-xs text-gray-400">Minutes</div>
           </div>
         </div>
@@ -366,29 +387,159 @@ function ConstraintPanel({
 
           <Separator className="bg-gray-700" />
 
-          {/* Locked Constructor */}
+          {/* Locked Drivers Multi-Select */}
           <div className="space-y-3">
-            <Label className="text-white">Lock Constructor</Label>
-            <Input
-              placeholder="e.g., Ferrari"
-              value={constraints.lockedConstructor}
-              onChange={(e) => onChange({ ...constraints, lockedConstructor: e.target.value })}
-              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-500"
-            />
+            <Label className="text-white">Lock Drivers</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className="w-full justify-between bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                >
+                  {constraints.lockedDrivers.length > 0
+                    ? `${constraints.lockedDrivers.length} selected`
+                    : "Select drivers..."}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0 bg-gray-800 border-gray-700" align="start">
+                <Command className="bg-gray-800">
+                  <CommandInput placeholder="Search drivers..." className="text-white" />
+                  <CommandEmpty>No driver found.</CommandEmpty>
+                  <CommandGroup className="max-h-64 overflow-auto">
+                    {DRIVERS.map((driver) => {
+                      const isSelected = constraints.lockedDrivers.includes(driver.name)
+                      return (
+                        <CommandItem
+                          key={driver.id}
+                          value={driver.name}
+                          onSelect={() => {
+                            const newLocked = isSelected
+                              ? constraints.lockedDrivers.filter((d) => d !== driver.name)
+                              : [...constraints.lockedDrivers, driver.name]
+                            onChange({ ...constraints, lockedDrivers: newLocked })
+                          }}
+                          className="text-white hover:bg-gray-700"
+                        >
+                          <div className="flex items-center gap-2 flex-1">
+                            <div
+                              className="w-1 h-6 rounded"
+                              style={{ backgroundColor: driver.teamColor }}
+                            />
+                            <div className="flex-1">
+                              <div className="font-medium">{driver.name}</div>
+                              <div className="text-xs text-gray-400">{driver.team}</div>
+                            </div>
+                            <div className="text-xs text-gray-400">${driver.fantasyValue}M</div>
+                          </div>
+                          <Check
+                            className={`ml-2 h-4 w-4 ${isSelected ? "opacity-100" : "opacity-0"}`}
+                          />
+                        </CommandItem>
+                      )
+                    })}
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            {constraints.lockedDrivers.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {constraints.lockedDrivers.map((driverName) => {
+                  const driver = getDriverByName(driverName)
+                  return (
+                    <Badge
+                      key={driverName}
+                      variant="outline"
+                      className="border-gray-600 text-white"
+                      style={{ borderColor: driver?.teamColor }}
+                    >
+                      {driverName}
+                      <X
+                        className="ml-1 h-3 w-3 cursor-pointer"
+                        onClick={() =>
+                          onChange({
+                            ...constraints,
+                            lockedDrivers: constraints.lockedDrivers.filter((d) => d !== driverName),
+                          })
+                        }
+                      />
+                    </Badge>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
-          {/* Locked Drivers */}
+          <Separator className="bg-gray-700" />
+
+          {/* Locked Constructor Select */}
           <div className="space-y-3">
-            <Label className="text-white">Lock Drivers (comma-separated)</Label>
-            <Input
-              placeholder="e.g., Lewis Hamilton, Max Verstappen"
-              value={constraints.lockedDrivers.join(', ')}
-              onChange={(e) => {
-                const drivers = e.target.value.split(',').map(d => d.trim()).filter(Boolean)
-                onChange({ ...constraints, lockedDrivers: drivers })
-              }}
-              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-500"
-            />
+            <Label className="text-white">Lock Constructor</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className="w-full justify-between bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                >
+                  {constraints.lockedConstructor || "Select constructor..."}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0 bg-gray-800 border-gray-700" align="start">
+                <Command className="bg-gray-800">
+                  <CommandInput placeholder="Search constructors..." className="text-white" />
+                  <CommandEmpty>No constructor found.</CommandEmpty>
+                  <CommandGroup>
+                    {CONSTRUCTORS.map((constructor) => (
+                      <CommandItem
+                        key={constructor.id}
+                        value={constructor.name}
+                        onSelect={(value) => {
+                          onChange({
+                            ...constraints,
+                            lockedConstructor: value === constraints.lockedConstructor ? '' : value,
+                          })
+                        }}
+                        className="text-white hover:bg-gray-700"
+                      >
+                        <div className="flex items-center gap-2 flex-1">
+                          <div
+                            className="w-1 h-6 rounded"
+                            style={{ backgroundColor: constructor.color }}
+                          />
+                          <div className="flex-1">
+                            <div className="font-medium">{constructor.name}</div>
+                          </div>
+                          <div className="text-xs text-gray-400">${constructor.fantasyValue}M</div>
+                        </div>
+                        <Check
+                          className={`ml-2 h-4 w-4 ${
+                            constraints.lockedConstructor === constructor.name
+                              ? "opacity-100"
+                              : "opacity-0"
+                          }`}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            {constraints.lockedConstructor && (
+              <Badge
+                variant="outline"
+                className="border-gray-600 text-white mt-2"
+                style={{ borderColor: getConstructorByName(constraints.lockedConstructor)?.color }}
+              >
+                {constraints.lockedConstructor}
+                <X
+                  className="ml-1 h-3 w-3 cursor-pointer"
+                  onClick={() => onChange({ ...constraints, lockedConstructor: '' })}
+                />
+              </Badge>
+            )}
           </div>
         </CardContent>
       )}
@@ -634,7 +785,10 @@ export default function Home() {
     setError(null)
 
     try {
-      const message = `Generate optimal F1 fantasy team for Monaco GP with budget ${constraints.budget}M${
+      const nextRace = getNextRace()
+      const raceName = nextRace ? nextRace.name : 'upcoming race'
+
+      const message = `Generate optimal F1 fantasy team for ${raceName} with budget ${constraints.budget}M${
         constraints.lockedDrivers.length > 0 ? `, lock ${constraints.lockedDrivers.join(', ')}` : ''
       }${
         constraints.lockedConstructor ? ` and ${constraints.lockedConstructor} constructor` : ''
@@ -662,7 +816,11 @@ export default function Home() {
     })
 
     try {
-      const message = `Explain why ${driverName} is recommended for Monaco GP with performance data, news context, and risk factors`
+      const nextRace = getNextRace()
+      const raceName = nextRace ? nextRace.name : 'upcoming race'
+      const circuitName = nextRace ? nextRace.circuit : 'the circuit'
+
+      const message = `Explain why ${driverName} is recommended for ${raceName} at ${circuitName} with performance data, news context, and risk factors`
       const result = await callAIAgent(message, AGENTS.AI_NARRATIVE)
 
       if (result.success && result.response.status === 'success') {
@@ -676,6 +834,8 @@ export default function Home() {
     }
   }
 
+  const nextRace = getNextRace()
+
   return (
     <div className="min-h-screen bg-[#1a1a2e]">
       {/* Header */}
@@ -685,13 +845,15 @@ export default function Home() {
             <div>
               <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                 <Flag className="w-8 h-8 text-[#e10600]" />
-                F1 Fantasy Intelligence
+                F1 Fantasy Intelligence 2026
               </h1>
               <p className="text-gray-400 mt-1">AI-Powered Team Recommendations</p>
             </div>
-            <Badge className="bg-[#e10600] text-white text-sm px-4 py-2">
-              Monaco GP
-            </Badge>
+            {nextRace && (
+              <Badge className="bg-[#e10600] text-white text-sm px-4 py-2">
+                {nextRace.name}
+              </Badge>
+            )}
           </div>
         </div>
       </header>
