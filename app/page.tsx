@@ -121,7 +121,7 @@ function DriverCard({
 
   return (
     <Card
-      className="relative overflow-hidden transition-all hover:shadow-lg hover:shadow-red-500/20"
+      className="relative overflow-hidden transition-all hover:shadow-lg hover:shadow-red-500/20 bg-black border-gray-800"
       style={{ borderLeft: `4px solid ${teamColor}` }}
     >
       <div
@@ -222,7 +222,7 @@ function ConstructorCard({
 
   return (
     <Card
-      className="relative overflow-hidden transition-all hover:shadow-lg hover:shadow-red-500/20"
+      className="relative overflow-hidden transition-all hover:shadow-lg hover:shadow-red-500/20 bg-black border-gray-800"
       style={{ borderLeft: `4px solid ${teamColor}` }}
     >
       <div
@@ -375,8 +375,8 @@ function ConstraintPanel({
                   onClick={() => onChange({ ...constraints, riskTolerance: risk })}
                   className={
                     constraints.riskTolerance === risk
-                      ? 'bg-[#e10600] hover:bg-[#e10600]/90 text-white'
-                      : 'border-gray-600 text-gray-300 hover:bg-gray-700'
+                      ? 'bg-[#e10600] hover:bg-[#e10600]/90 text-white text-xs'
+                      : 'border-gray-600 text-gray-300 hover:bg-gray-700 text-xs'
                   }
                 >
                   {risk}
@@ -968,17 +968,21 @@ export default function Home() {
                         Recommended Drivers
                       </h2>
                       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {recommendation.recommended_team.drivers.map((driver, index) => (
-                          <DriverCard
-                            key={index}
-                            name={driver}
-                            isRecommended={true}
-                            confidence={recommendation.confidence_score}
-                            riskLevel={recommendation.risk_level}
-                            onExplain={() => explainDriver(driver)}
-                            showDetails={viewMode === 'detailed'}
-                          />
-                        ))}
+                        {recommendation.recommended_team.drivers.map((driver, index) => {
+                          const driverData = getDriverByName(driver)
+                          if (!driverData) return null
+                          return (
+                            <DriverCard
+                              key={index}
+                              name={driver}
+                              isRecommended={true}
+                              confidence={recommendation.confidence_score}
+                              riskLevel={recommendation.risk_level}
+                              onExplain={() => explainDriver(driver)}
+                              showDetails={viewMode === 'detailed'}
+                            />
+                          )
+                        })}
                       </div>
                     </div>
 
@@ -1002,36 +1006,47 @@ export default function Home() {
                       <div>
                         <h2 className="text-xl font-bold text-white mb-4">Alternative Teams</h2>
                         <div className="grid md:grid-cols-2 gap-4">
-                          {recommendation.alternatives.map((alt, index) => (
-                            <Card key={index} className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
-                              <CardHeader>
-                                <CardTitle className="text-white text-lg">
-                                  Alternative {index + 1}
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent className="space-y-3">
-                                <div className="space-y-1">
-                                  <div className="text-sm text-gray-400">Drivers</div>
-                                  <div className="text-sm text-white">
-                                    {alt.drivers.join(', ')}
+                          {recommendation.alternatives.map((alt, index) => {
+                            // Filter out invalid drivers
+                            const validDrivers = alt.drivers.filter(driver => getDriverByName(driver) !== undefined)
+                            const validConstructor = getConstructorByName(alt.constructor)
+
+                            // Skip this alternative if it has invalid drivers or constructor
+                            if (validDrivers.length !== alt.drivers.length || !validConstructor) {
+                              return null
+                            }
+
+                            return (
+                              <Card key={index} className="bg-black border-gray-800">
+                                <CardHeader>
+                                  <CardTitle className="text-white text-lg">
+                                    Alternative {index + 1}
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-3">
+                                  <div className="space-y-1">
+                                    <div className="text-sm text-gray-400">Drivers</div>
+                                    <div className="text-sm text-white">
+                                      {validDrivers.join(', ')}
+                                    </div>
                                   </div>
-                                </div>
-                                <div className="space-y-1">
-                                  <div className="text-sm text-gray-400">Constructor</div>
-                                  <div className="text-sm text-white font-bold">{alt.constructor}</div>
-                                </div>
-                                <Separator className="bg-gray-700" />
-                                <div className="flex justify-between text-sm">
-                                  <span className="text-gray-400">Cost</span>
-                                  <span className="text-white font-mono">${alt.total_cost}M</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                  <span className="text-gray-400">Points</span>
-                                  <span className="text-white font-bold">{alt.projected_points}</span>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
+                                  <div className="space-y-1">
+                                    <div className="text-sm text-gray-400">Constructor</div>
+                                    <div className="text-sm text-white font-bold">{alt.constructor}</div>
+                                  </div>
+                                  <Separator className="bg-gray-700" />
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-gray-400">Cost</span>
+                                    <span className="text-white font-mono">${alt.total_cost}M</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-gray-400">Points</span>
+                                    <span className="text-white font-bold">{alt.projected_points}</span>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            )
+                          })}
                         </div>
                       </div>
                     )}
