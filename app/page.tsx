@@ -902,9 +902,15 @@ export default function Home() {
             {error && (
               <Card className="bg-red-500/10 border-red-500/50">
                 <CardContent className="pt-6">
-                  <div className="flex items-center gap-2 text-red-400">
-                    <AlertCircle className="w-5 h-5" />
-                    <span>{error}</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-red-400">
+                      <AlertCircle className="w-5 h-5" />
+                      <span className="font-bold">Error</span>
+                    </div>
+                    <p className="text-red-300 text-sm">{error}</p>
+                    <p className="text-gray-400 text-xs mt-2">
+                      If this persists, the AI agent may need to be retrained or the response schema may need updating.
+                    </p>
                   </div>
                 </CardContent>
               </Card>

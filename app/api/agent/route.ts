@@ -158,32 +158,59 @@ export async function POST(request: NextRequest) {
     const rawText = await response.text()
 
     if (response.ok) {
-      const parsed = parseLLMJson(rawText)
+      try {
+        const parsed = parseLLMJson(rawText)
 
-      if (parsed?.success === false && parsed?.error) {
+        if (!parsed) {
+          return NextResponse.json({
+            success: false,
+            response: {
+              status: 'error',
+              result: {},
+              message: 'Failed to parse agent response. The agent may have returned invalid JSON.',
+            },
+            error: 'Failed to parse agent response',
+            raw_response: rawText,
+          })
+        }
+
+        if (parsed?.success === false && parsed?.error) {
+          return NextResponse.json({
+            success: false,
+            response: {
+              status: 'error',
+              result: {},
+              message: parsed.error,
+            },
+            error: parsed.error,
+            raw_response: rawText,
+          })
+        }
+
+        const normalized = normalizeResponse(parsed)
+
+        return NextResponse.json({
+          success: true,
+          response: normalized,
+          agent_id,
+          user_id: finalUserId,
+          session_id: finalSessionId,
+          timestamp: new Date().toISOString(),
+          raw_response: rawText,
+        })
+      } catch (parseError) {
         return NextResponse.json({
           success: false,
           response: {
             status: 'error',
             result: {},
-            message: parsed.error,
+            message: `JSON parsing error: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`,
           },
-          error: parsed.error,
-          raw_response: rawText,
+          error: 'JSON parsing failed',
+          raw_response: rawText.substring(0, 500), // Include first 500 chars for debugging
+          details: parseError instanceof Error ? parseError.message : 'Unknown error',
         })
       }
-
-      const normalized = normalizeResponse(parsed)
-
-      return NextResponse.json({
-        success: true,
-        response: normalized,
-        agent_id,
-        user_id: finalUserId,
-        session_id: finalSessionId,
-        timestamp: new Date().toISOString(),
-        raw_response: rawText,
-      })
     } else {
       let errorMsg = `API returned status ${response.status}`
       try {
