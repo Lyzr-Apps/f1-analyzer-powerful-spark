@@ -85,9 +85,37 @@ export async function callAIAgent(
       }),
     })
 
-    const data = await response.json()
+    // Get the raw text first to help debug
+    const rawText = await response.text()
+
+    // Try to parse as JSON
+    let data: AIAgentResponse
+    try {
+      data = JSON.parse(rawText)
+    } catch (parseError) {
+      console.error('Failed to parse API response:', rawText.substring(0, 500))
+      return {
+        success: false,
+        response: {
+          status: 'error',
+          result: {},
+          message: `Failed to parse API response: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`,
+        },
+        error: 'JSON parsing failed',
+      }
+    }
+
+    // Log errors for debugging
+    if (!data.success) {
+      console.error('AI Agent Error:', data.error, data.response?.message)
+      if (data.raw_response) {
+        console.error('Raw response preview:', data.raw_response.substring(0, 500))
+      }
+    }
+
     return data
   } catch (error) {
+    console.error('Network error calling AI agent:', error)
     return {
       success: false,
       response: {

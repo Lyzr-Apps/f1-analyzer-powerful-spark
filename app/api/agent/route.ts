@@ -161,19 +161,22 @@ export async function POST(request: NextRequest) {
       try {
         const parsed = parseLLMJson(rawText)
 
-        if (!parsed) {
+        // Check if parser returned an error object
+        if (!parsed || (typeof parsed === 'object' && parsed.success === false)) {
+          const errorMessage = parsed?.error || 'Failed to parse agent response. The agent may have returned invalid JSON.'
           return NextResponse.json({
             success: false,
             response: {
               status: 'error',
               result: {},
-              message: 'Failed to parse agent response. The agent may have returned invalid JSON.',
+              message: errorMessage,
             },
-            error: 'Failed to parse agent response',
-            raw_response: rawText,
+            error: errorMessage,
+            raw_response: rawText.substring(0, 1000),
           })
         }
 
+        // Check if the parsed result itself indicates an error
         if (parsed?.success === false && parsed?.error) {
           return NextResponse.json({
             success: false,
